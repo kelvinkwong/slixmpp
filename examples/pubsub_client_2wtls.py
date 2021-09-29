@@ -74,7 +74,11 @@ class PubsubClient(slixmpp.ClientXMPP):
             logging.error('Could not retrieve configure form from node %s: %s', self.node, error.format())
 
     async def publish(self):
-        payload = ET.fromstring("<test xmlns='test'>%s</test>" % self.data)
+        if self.data:
+            payload = ET.fromstring(self.data)
+        else:
+            payload = ET.fromstring("<test xmlns='test'>hello world</test>")
+
         try:
             result = await self['xep_0060'].publish(self.pubsub_server, self.node, payload=payload)
             logging.info('Published at item id: %s', result['pubsub']['publish']['item']['id'])
